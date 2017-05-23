@@ -1,0 +1,49 @@
+package testforjava;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+
+//C:\Users\zhakypbekov_30855\Desktop\test1//Записи.txt
+
+class Task extends SimpleFileVisitor<Path> {
+	private static int count = 0;
+	private static int countFolders = -1;
+	private static int countFiles = 0;
+	private static long allSize = 0;
+	public static void main(String[] args) throws IOException {
+		Path path = Paths.get("C:\\Users\\zhakypbekov_30855\\Desktop\\test1");
+		Task taks = new Task();
+		Files.walkFileTree(path, taks);
+		System.out.format("Всего папок - %d%n", countFolders);
+		System.out.format("Всего файлов - %d%n", countFiles);
+		System.out.format("Общий размер - %s%n", allSize);
+		
+    }
+	
+	@Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		
+		if(count == 1 && attrs.isRegularFile()){
+			count++;
+			System.out.println("[" + file +"] - не папка");
+			return FileVisitResult.TERMINATE;
+		} 
+		 if(attrs.isRegularFile()){
+			countFiles++;
+			allSize += attrs.size();
+		} 
+		
+        return super.visitFile(file, attrs);
+    }
+	public FileVisitResult postVisitDirectory(Path file, IOException exc) {
+
+			countFolders++;
+
+        return FileVisitResult.CONTINUE;
+    }
+}
+
